@@ -73,16 +73,16 @@ var fetchPlaylist = function() {
 				fields: 'tracks.items(added_by.id,added_at,track(name,artists.name,album.name)),name,external_urls.spotify'
 			}).then(function(data) {
 				for (var i in data.tracks.items) {
-					spotifyApi.getUser(data.tracks.items[i].added_by.id).then(function(userData) {
+					// spotifyApi.getUser(data.tracks.items[i].added_by.id).then(function(userData) {
 						var date = new Date(data.tracks.items[i].added_at);
 						if ((!lastDate.isValid()) || (date > lastDate)) {
 							post(data.name, data.external_urls.spotify, userData ? userData.display_name : "Unknown", data.tracks.items[i].track.name, data.tracks.items[i].track.artists);
 						}
 						lastDate = date;
 						writeLastDate(lastDate);
-					}, function(err) {
-						console.log('something went wrong', err);
-					});
+					// }, function(err) {
+						// console.log('something went wrong', err);
+					// });
 				}
 			}, function(err) {
 				console.log('Something went wrong!', err);
