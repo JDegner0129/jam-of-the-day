@@ -96,6 +96,8 @@ var fetchPlaylist = function() {
 						if(data.total > data.tracks.count)
 						{
 							var offset = data.total - data.tracks;
+							console.log("writing offset: " + offset);
+							writeOffset(offset);
 							
 						}
 						
