@@ -38,7 +38,7 @@ var fetchPlaylist = function() {
 		var lastDate;
 		var writeLastDate;
 		var writeLastOffset;
-		var lastOffset = 0;
+		var lastOffset;
 		if (process.env.REDISTOGO_URL) {
 			console.log("using redis");
 			var rtg = require("url").parse(process.env.REDISTOGO_URL);
@@ -76,10 +76,6 @@ var fetchPlaylist = function() {
 				fs.writeFile("./last_offset.txt", offset, function(){});
 			}
 			var lastOffsetContents = fs.readFileSync('./last_offset.txt').toString();
-			if(lastOffsetContents.length)
-			{
-				lastOffset = parseInt(lastOffsetContents);
-			}
 		}
 
 		return function() {
@@ -88,7 +84,7 @@ var fetchPlaylist = function() {
 			}
 			console.log("Last fetched at:", lastDate);
 			spotifyApi.getPlaylistTracks(spotifyUser, spotifyPlaylistId, {
-				offset: lastOffset.toString()
+				offset: lastOffset.length ? lastOffset : "0"
 			}).then(function(data) {
 				for (var i in data.items) {
 					var date = new Date(data.items[i].added_at);
@@ -102,7 +98,7 @@ var fetchPlaylist = function() {
 				{
 					console.log("writing offset: " + data.offset);
 					lastOffset = data.total - (data.limit + data.offset);
-					writeLastOffset(lastOffset);
+					writeLastOffset(lastOffset.toString());
 				}
 			}, function(err) {
 				console.log('Something went wrong!', err);
