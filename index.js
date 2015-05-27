@@ -37,6 +37,8 @@ var client;
 var fetchPlaylist = function() {
 		var lastDate;
 		var writeLastDate;
+		var writeOffset;
+		var lastOffset;
 		if (process.env.REDISTOGO_URL) {
 			console.log("using redis");
 			var rtg = require("url").parse(process.env.REDISTOGO_URL);
@@ -50,9 +52,17 @@ var fetchPlaylist = function() {
 					lastDate = new Date(value);
 				}
 			});
+			client.get("offset", function(err, value){
+				if(!err){
+					lastOffset = value;
+				}
+			});
 			writeLastDate = function(date) {
 				client.set('lastDate', date);
 			};
+			writeOffset = function(offset){
+				client.set('offset', offset);
+			}
 		} else {
 			console.log("using filesystem");
 			var contents = fs.readFileSync('./last_date.txt');
@@ -71,7 +81,8 @@ var fetchPlaylist = function() {
 			}
 			console.log("Last fetched at:", lastDate);
 			spotifyApi.getPlaylist(spotifyUser, spotifyPlaylistId, {
-				fields: 'tracks.items(added_by.id,added_at,track(name,artists.name,album.name)),name,external_urls.spotify'
+				fields: 'tracks.items(added_by.id,added_at,track(name,artists.name,album.name)),name,external_urls.spotify,total',
+				offset: lastOffset || 0
 			}).then(function(data) {
 				for (var i in data.tracks.items) {
 					// spotifyApi.getUser(data.tracks.items[i].added_by.id).then(function(userData) {
@@ -81,6 +92,11 @@ var fetchPlaylist = function() {
 							post(data.name, data.external_urls.spotify, data.tracks.items[i].added_by.id, data.tracks.items[i].track.name, data.tracks.items[i].track.artists);
 							lastDate = date;
 							writeLastDate(lastDate);
+						}
+						if(data.total > data.tracks.count)
+						{
+							var offset = data.total - data.tracks;
+							
 						}
 						
 					// }, function(err) {
