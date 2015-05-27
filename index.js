@@ -37,8 +37,8 @@ var client;
 var fetchPlaylist = function() {
 		var lastDate;
 		var writeLastDate;
-		var writeOffset;
-		var lastOffset;
+		var writeLastOffset;
+		var lastOffset = 0;
 		if (process.env.REDISTOGO_URL) {
 			console.log("using redis");
 			var rtg = require("url").parse(process.env.REDISTOGO_URL);
@@ -60,7 +60,7 @@ var fetchPlaylist = function() {
 			writeLastDate = function(date) {
 				client.set('lastDate', date);
 			};
-			writeOffset = function(offset){
+			writeLastOffset = function(offset){
 				client.set('offset', offset);
 			}
 		} else {
@@ -72,7 +72,14 @@ var fetchPlaylist = function() {
 			writeLastDate = function(date) {
 				fs.writeFile("./last_date.txt", date, function() {});
 			};
-
+			writeLastOffset = function(offset){
+				fs.writeFile("./last_offset.txt", offset, function(){});
+			}
+			var lastOffsetContents = fs.readFileSync('./last_offset.txt').toString();
+			if(lastOffsetContents.length)
+			{
+				lastOffset = parseInt(lastOffsetContents);
+			}
 		}
 
 		return function() {
@@ -80,29 +87,22 @@ var fetchPlaylist = function() {
 				return;
 			}
 			console.log("Last fetched at:", lastDate);
-			spotifyApi.getPlaylist(spotifyUser, spotifyPlaylistId, {
-				fields: 'tracks.items(added_by.id,added_at,track(name,artists.name,album.name)),name,external_urls.spotify,total',
-				offset: lastOffset || 0
+			spotifyApi.getPlaylistTracks(spotifyUser, spotifyPlaylistId, {
+				offset: lastOffset.toString()
 			}).then(function(data) {
-				for (var i in data.tracks.items) {
-					// spotifyApi.getUser(data.tracks.items[i].added_by.id).then(function(userData) {
-						var date = new Date(data.tracks.items[i].added_at);
-						if (date > lastDate) {
-							post(data.name, data.external_urls.spotify, data.tracks.items[i].added_by.id, data.tracks.items[i].track.name, data.tracks.items[i].track.artists);
-							lastDate = date;
-							writeLastDate(lastDate);
-						}
-						if(data.total > data.tracks.count)
-						{
-							var offset = data.total - data.tracks;
-							console.log("writing offset: " + offset);
-							writeOffset(offset);
-							
-						}
-						
-					// }, function(err) {
-						// console.log('something went wrong', err);
-					// });
+				for (var i in data.items) {
+					var date = new Date(data.items[i].added_at);
+					if (!date.isValid() || date > lastDate) {
+						post("hudl-jam-of-the-day", "https://open.spotify.com/user/jamiepinkham/playlist/1kyph67S6GL8rSvOpeVskS", data.items[i].added_by.id, data.items[i].track.name, data.items[i].track.artists);
+						lastDate = date;
+						writeLastDate(lastDate);
+					}
+				}
+				if(data.total > (data.limit + data.offset))
+				{
+					console.log("writing offset: " + data.offset);
+					lastOffset = data.total - (data.limit + data.offset);
+					writeLastOffset(lastOffset);
 				}
 			}, function(err) {
 				console.log('Something went wrong!', err);
