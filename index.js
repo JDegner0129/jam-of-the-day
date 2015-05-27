@@ -76,7 +76,7 @@ var fetchPlaylist = function() {
 				for (var i in data.tracks.items) {
 					// spotifyApi.getUser(data.tracks.items[i].added_by.id).then(function(userData) {
 						var date = new Date(data.tracks.items[i].added_at);
-						if ((!lastDate.isValid()) || (date > lastDate)) {
+						if (date > lastDate) {
 							post(data.name, data.external_urls.spotify, data.tracks.items[i].added_by.id, data.tracks.items[i].track.name, data.tracks.items[i].track.artists);
 							lastDate = date;
 							writeLastDate(lastDate);
