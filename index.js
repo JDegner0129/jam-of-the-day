@@ -98,7 +98,7 @@ var fetchPlaylist = function() {
 				}
 				if(data.total > (data.limit + data.offset))
 				{
-					lastOffset = data.total - (data.limit + data.offset);
+					lastOffset = (data.total - (data.limit + data.offset)).toString();
 					console.log("writing offset: " + lastOffset);
 					writeLastOffset(lastOffset.toString());
 				}
