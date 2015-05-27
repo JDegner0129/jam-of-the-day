@@ -83,8 +83,10 @@ var fetchPlaylist = function() {
 				return;
 			}
 			console.log("Last fetched at:", lastDate);
+			var offset = (lastOffset.length ? lastOffset : "0");
+			console.log("requesting at offset: " + offset);
 			spotifyApi.getPlaylistTracks(spotifyUser, spotifyPlaylistId, {
-				offset: lastOffset.length ? lastOffset : "0"
+				offset: offset
 			}).then(function(data) {
 				for (var i in data.items) {
 					var date = new Date(data.items[i].added_at);
@@ -96,8 +98,8 @@ var fetchPlaylist = function() {
 				}
 				if(data.total > (data.limit + data.offset))
 				{
-					console.log("writing offset: " + data.offset);
 					lastOffset = data.total - (data.limit + data.offset);
+					console.log("writing offset: " + lastOffset);
 					writeLastOffset(lastOffset.toString());
 				}
 			}, function(err) {
