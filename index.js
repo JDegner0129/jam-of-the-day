@@ -1,13 +1,13 @@
 var SpotifyWebApi = require('spotify-web-api-node');
 var creds = {
-	clientId: process.env.SPOTIFY_CLIENT_ID,
-	clientSecret: process.env.SPOTIFY_CLIENT_SECRET
+	clientId: process.env.SPOTIFY_CLIENT_ID || "154eb1729d264a469ef79216e8ac5aba",
+	clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "6eee5ab7acd2482692c2aedf553377d8"
 };
 var spotifyApi = new SpotifyWebApi(creds);
-var spotifyUser = process.env.SPOTIFY_USERNAME;
-var spotifyPlaylistId = process.env.SPOTIFY_PLAYLIST;
+var spotifyUser = process.env.SPOTIFY_USERNAME || "jamiepinkham";
+var spotifyPlaylistId = process.env.SPOTIFY_PLAYLIST || "1kyph67S6GL8rSvOpeVskS";
 
-var slack = require('slack-notify')(process.env.SLACK_URL);
+var slack = require('slack-notify')(process.env.SLACK_URL || "https://hooks.slack.com/services/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");
 
 var fs = require('fs');
 var redis = require('redis');
@@ -54,6 +54,7 @@ var fetchPlaylist = function() {
 				client.set('lastDate', date);
 			};
 		} else {
+			console.log("using filesystem");
 			var contents = fs.readFileSync('./last_date.txt');
 			console.log(contents.toString());
 			lastDate = new Date(contents.toString());
