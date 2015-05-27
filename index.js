@@ -75,7 +75,7 @@ var fetchPlaylist = function() {
 			writeLastOffset = function(offset){
 				fs.writeFile("./last_offset.txt", offset, function(){});
 			}
-			var lastOffsetContents = fs.readFileSync('./last_offset.txt').toString();
+			lastOffset = fs.readFileSync('./last_offset.txt').toString();
 		}
 
 		return function() {
@@ -83,7 +83,7 @@ var fetchPlaylist = function() {
 				return;
 			}
 			console.log("Last fetched at:", lastDate);
-			var offset = (lastOffset.length ? lastOffset : "0");
+			var offset = (lastOffset.length != 0 ? lastOffset : "0");
 			console.log("requesting at offset: " + offset);
 			spotifyApi.getPlaylistTracks(spotifyUser, spotifyPlaylistId, {
 				offset: offset
@@ -98,7 +98,7 @@ var fetchPlaylist = function() {
 				}
 				if(data.total > (data.limit + data.offset))
 				{
-					lastOffset = (data.total - (data.limit + data.offset)).toString();
+					lastOffset = data.limit + data.offset;
 					console.log("writing offset: " + lastOffset);
 					writeLastOffset(lastOffset.toString());
 				}
@@ -120,9 +120,9 @@ var slacker = slack.extend({
 function post(list_name, list_url, added_by, trackname, artists) {
 	var text = 'New track added by ' + added_by + ' - *' + trackname + '* by ' + artists[0].name + ' in list <' + list_url + '|' + list_name + '>';
 	console.log(text);
-	slacker({
-		text: text
-	});
+//	slacker({
+//		text: text
+//	});
 }
 
 grantClient();
