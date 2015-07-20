@@ -1,13 +1,13 @@
 var SpotifyWebApi = require('spotify-web-api-node');
 var creds = {
-	clientId: process.env.SPOTIFY_CLIENT_ID || "154eb1729d264a469ef79216e8ac5aba",
-	clientSecret: process.env.SPOTIFY_CLIENT_SECRET || "6eee5ab7acd2482692c2aedf553377d8"
+	clientId: process.env.SPOTIFY_CLIENT_ID,
+	clientSecret: process.env.SPOTIFY_CLIENT_SECRET
 };
 var spotifyApi = new SpotifyWebApi(creds);
-var spotifyUser = process.env.SPOTIFY_USERNAME || "jamiepinkham";
-var spotifyPlaylistId = process.env.SPOTIFY_PLAYLIST || "1kyph67S6GL8rSvOpeVskS";
+var spotifyUser = process.env.SPOTIFY_USERNAME;
+var spotifyPlaylistId = process.env.SPOTIFY_PLAYLIST;
 
-var slack = require('slack-notify')(process.env.SLACK_URL || "https://hooks.slack.com/services/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");
+var slack = require('slack-notify')(process.env.SLACK_URL);
 
 var fs = require('fs');
 var redis = require('redis');
@@ -113,7 +113,7 @@ slack.onError = function(err) {
 };
 var slacker = slack.extend({
 	username: 'spotify-playlist',
-	icon_url: 'http://icons.iconarchive.com/icons/xenatt/the-circle/256/App-Spotify-icon.png',
+	icon_url: 'http://a3.mzstatic.com/us/r30/Purple7/v4/2f/1b/ef/2f1befb1-7507-2107-1aac-b4eb18a0727f/icon175x175.png',
 	unfurl_media: false
 });
 
