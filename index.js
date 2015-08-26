@@ -91,7 +91,7 @@ var fetchPlaylist = function() {
 				for (var i in data.items) {
 					var date = new Date(data.items[i].added_at);
 					if (!date.isValid() || date > lastDate) {
-						post("hudl-jam-of-the-day", "https://open.spotify.com/user/jamiepinkham/playlist/1kyph67S6GL8rSvOpeVskS", data.items[i].added_by.id, data.items[i].track.name, data.items[i].track.artists);
+						post("jam of the day", "https://open.spotify.com/user/121317829/playlist/14A92O7ujDdxRb1dwuh2mJ", data.items[i].added_by.id, data.items[i].track.name, data.items[i].track.artists);
 						lastDate = date;
 						writeLastDate(lastDate);
 					}
