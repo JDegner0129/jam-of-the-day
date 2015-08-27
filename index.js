@@ -118,6 +118,16 @@ var slacker = slack.extend({
 });
 
 function post(list_name, list_url, added_by, trackname, artists) {
+    var usernameHash = {
+        '121317829': 'Jordan Degner',
+        '1266290672': 'Josh Petro',
+        '1215629430': 'Josh Cox',
+    };
+
+    if (!isNaN(added_by) && added_by in usernameHash) {
+        added_by = usernameHash[added_by];
+    }
+
 	var text = 'New track added by ' + added_by + ' - *' + trackname + '* by ' + artists[0].name + ' in list <' + list_url + '|' + list_name + '>';
 	console.log(text);
 	slacker({
