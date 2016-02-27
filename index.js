@@ -92,12 +92,18 @@ var fetchPlaylist = function() {
           var item = data.items[i];
 					var date = new Date(item.added_at);
 					if (!date.isValid() || date > lastDate) {
+            console.log('posting new track');
+
             var artistsStr = item.track.artists.map(function(a) {
               return a.name;
             }).join(', ');
+            console.log(artistsStr);
 
             var albumName = item.track.album.name;
+            console.log(albumName);
+
             var albumThumbnailUrl = item.track.album.images[1].url;
+            console.log(albumThumbnailUrl);
 
 						post("jam of the day",
               "https://open.spotify.com/user/121317829/playlist/14A92O7ujDdxRb1dwuh2mJ",
@@ -162,6 +168,8 @@ function post(list_name, list_url, added_by, trackname, artists, album, albumArt
     ],
     thumb_url: albumArtUrl,
   }];
+
+  console.log(attachment);
 
 	slacker({
 		attachment: attachment,
