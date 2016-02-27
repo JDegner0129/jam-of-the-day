@@ -169,11 +169,11 @@ function post(list_name, list_url, added_by, trackname, artists, album, albumArt
     thumb_url: albumArtUrl,
   }];
 
-  console.log(attachment);
+  console.log(attachment[0]);
 
 	slacker({
-    text: '',
-		attachment: attachment,
+    text: 'Test text',
+		attachments: attachment,
 	});
 }
 
