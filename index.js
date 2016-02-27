@@ -89,9 +89,25 @@ var fetchPlaylist = function() {
 				offset: offset
 			}).then(function(data) {
 				for (var i in data.items) {
-					var date = new Date(data.items[i].added_at);
+          var item = data.items[i];
+					var date = new Date(item.added_at);
 					if (!date.isValid() || date > lastDate) {
-						post("jam of the day", "https://open.spotify.com/user/121317829/playlist/14A92O7ujDdxRb1dwuh2mJ", data.items[i].added_by.id, data.items[i].track.name, data.items[i].track.artists);
+            var artistsStr = item.track.artists.map(function(a) {
+              return a.name;
+            }).join(', ');
+
+            var albumName = item.track.album.name;
+            var albumThumbnailUrl = item.track.album.images[1].url;
+
+						post("jam of the day",
+              "https://open.spotify.com/user/121317829/playlist/14A92O7ujDdxRb1dwuh2mJ",
+              item.added_by.id,
+              item.track.name,
+              artistsStr,
+              albumName,
+              albumThumbnailUrl
+            );
+
 						lastDate = date;
 						writeLastDate(lastDate);
 					}
@@ -112,26 +128,43 @@ slack.onError = function(err) {
 	console.log('API error:', err);
 };
 var slacker = slack.extend({
-	username: 'spotify-playlist',
-	icon_url: 'http://a3.mzstatic.com/us/r30/Purple7/v4/2f/1b/ef/2f1befb1-7507-2107-1aac-b4eb18a0727f/icon175x175.png',
+	username: 'Spotify',
 	unfurl_media: false
 });
 
-function post(list_name, list_url, added_by, trackname, artists) {
-    var usernameHash = {
-        '121317829': 'Jordan Degner',
-        '1266290672': 'Josh Petro',
-        '1215629430': 'Josh Cox',
-    };
+function post(list_name, list_url, added_by, trackname, artists, album, albumArtUrl) {
+  var usernameHash = {
+      '121317829': 'Jordan Degner',
+      '1266290672': 'Josh Petro',
+      '1215629430': 'Josh Cox',
+  };
 
-    if (!isNaN(added_by) && added_by in usernameHash) {
-        added_by = usernameHash[added_by];
-    }
+  if (!isNaN(added_by) && added_by in usernameHash) {
+      added_by = usernameHash[added_by];
+  }
 
-	var text = 'New track added by ' + added_by + ' - *' + trackname + '* by ' + artists[0].name + ' in list <' + list_url + '|' + list_name + '>';
-	console.log(text);
+  var attachment = [{
+    color: 'success',
+    title: `New track added by ${added_by} - "${trackname}" by ${artists}`,
+    title_link: list_url,
+    text: `Added to ${list_name} by ${added_by}`,
+    fields: [
+      {
+        title: 'Artist',
+        value: artists,
+        short: true,
+      },
+      {
+        title: 'Album',
+        value: album,
+        short: true,
+      },
+    ],
+    thumb_url: albumArtUrl,
+  }];
+
 	slacker({
-		text: text
+		attachment: attachment,
 	});
 }
 
