@@ -145,9 +145,9 @@ function post(list_name, list_url, added_by, trackname, artists, album, albumArt
 
   var attachment = [{
     color: 'success',
-    title: `New track added by ${added_by} - "${trackname}" by ${artists}`,
+    title: 'New track added by ' + added_by + ' - "' + trackname + '" by ' + artists,
     title_link: list_url,
-    text: `Added to ${list_name} by ${added_by}`,
+    text: 'Added to ' + list_name + ' by ' + added_by,
     fields: [
       {
         title: 'Artist',
