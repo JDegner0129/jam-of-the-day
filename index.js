@@ -172,6 +172,7 @@ function post(list_name, list_url, added_by, trackname, artists, album, albumArt
   console.log(attachment);
 
 	slacker({
+    text: '',
 		attachment: attachment,
 	});
 }
