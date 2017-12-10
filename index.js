@@ -100,7 +100,7 @@ var fetchPlaylist = function() {
             var albumThumbnailUrl = item.track.album.images[1].url;
 
 						post("jam of the day",
-              "https://open.spotify.com/user/121317829/playlist/14A92O7ujDdxRb1dwuh2mJ",
+              `https://open.spotify.com/user/${spotifyUser}/playlist/${spotifyPlaylistId}`,
               item.added_by.id,
               item.track.name,
               artistsStr,
@@ -140,6 +140,7 @@ function post(list_name, list_url, added_by, trackname, artists, album, albumArt
       '1215629430': 'Josh Cox',
       '127376654': 'Matt Mejstrik',
       '1221600068': 'Claire Wieger',
+      '1274188561': 'Brandon Collins'
   };
 
   if (!isNaN(added_by) && added_by in usernameHash) {
