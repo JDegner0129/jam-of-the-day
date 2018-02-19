@@ -1,6 +1,6 @@
 var SpotifyWebApi = require('spotify-web-api-node');
 var creds = {
-	clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientId: process.env.SPOTIFY_CLIENT_ID,
 	clientSecret: process.env.SPOTIFY_CLIENT_SECRET
 };
 var spotifyApi = new SpotifyWebApi(creds);
@@ -140,7 +140,8 @@ function post(list_name, list_url, added_by, trackname, artists, album, albumArt
       '1215629430': 'Josh Cox',
       '127376654': 'Matt Mejstrik',
       '1221600068': 'Claire Wieger',
-      '1274188561': 'Brandon Collins'
+      '1274188561': 'Brandon Collins',
+      '1212368378': 'Julie Gates'
   };
 
   if (!isNaN(added_by) && added_by in usernameHash) {
